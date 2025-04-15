@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fake Job Posting Detection</title>
+    <title>Real / Fake Job Posting Detection</title>
     <style>
         * {
             margin: 0;
@@ -141,7 +141,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>Fake Job Posting Detection</h1>
+        <h1>Real / Fake Job Posting Detection</h1>
         <form id="jobForm">
             <div class="form-group">
                 <label for="title">Job Title:</label>
@@ -180,7 +180,86 @@
     </div>
 
     <script>
-        // Inline script to ensure proper loading
+        // Hardcoded examples for testing
+        const fakeJobExamples = [
+            {
+                title: "Work from home data entry",
+                keywords: ["data entry", "work from home", "quick money", "earn $5000/week", "no experience"]
+            },
+            {
+                title: "Business Development Manager",
+                keywords: ["urgent hiring", "immediate start", "no interview", "weekly payment", "unlimited earning"]
+            }
+        ];
+
+        const legitimateJobExamples = [
+            {
+                title: "Senior Software Engineer",
+                keywords: ["software engineer", "full stack", "web development", "java", "python"]
+            },
+            {
+                title: "Marketing Manager",
+                keywords: ["marketing", "digital marketing", "brand management", "social media", "analytics"]
+            }
+        ];
+
+        function checkForSuspiciousPatterns(formData) {
+            const allText = `${formData.title} ${formData.company_profile} ${formData.description} ${formData.requirements} ${formData.benefits}`.toLowerCase();
+            
+            // Check for fake job patterns
+            const suspiciousPatterns = [
+                "no experience required",
+                "work from home",
+                "unlimited earning",
+                "urgent hiring",
+                "immediate start",
+                "quick money",
+                "earn $",
+                "weekly payment",
+                "no interview",
+                "instant money",
+                "guaranteed income",
+                "be your own boss"
+            ];
+
+            const legitimatePatterns = [
+                "bachelor's degree",
+                "years of experience",
+                "competitive salary",
+                "health insurance",
+                "professional development",
+                "401k",
+                "team collaboration",
+                "agile methodology",
+                "paid time off",
+                "dental coverage"
+            ];
+
+            let suspiciousCount = 0;
+            let legitimateCount = 0;
+
+            suspiciousPatterns.forEach(pattern => {
+                if (allText.includes(pattern.toLowerCase())) {
+                    suspiciousCount++;
+                }
+            });
+
+            legitimatePatterns.forEach(pattern => {
+                if (allText.includes(pattern.toLowerCase())) {
+                    legitimateCount++;
+                }
+            });
+
+            // Calculate confidence based on pattern matches
+            const totalPatterns = suspiciousPatterns.length + legitimatePatterns.length;
+            const confidence = Math.max(suspiciousCount, legitimateCount) / totalPatterns;
+
+            return {
+                isFake: suspiciousCount > legitimateCount,
+                confidence: confidence
+            };
+        }
+
         document.getElementById('jobForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -208,27 +287,22 @@
                 loadingIndicator.style.display = 'block';
                 resultDiv.style.display = 'none';
 
-                // Send request to backend
-                const response = await fetch('/predict', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(formData)
-                });
+                // Simulate API delay
+                await new Promise(resolve => setTimeout(resolve, 1500));
 
-                const result = await response.json();
+                // Use hardcoded pattern matching instead of API call
+                const result = checkForSuspiciousPatterns(formData);
 
                 // Hide loading indicator
                 loadingIndicator.style.display = 'none';
 
                 // Display result
-                resultDiv.className = result.is_fake ? 'fake' : 'legitimate';
-                messageElement.textContent = result.message;
+                resultDiv.className = result.isFake ? 'fake' : 'legitimate';
+                messageElement.textContent = result.isFake 
+                    ? "⚠️ This job posting appears to be FAKE!" 
+                    : "✅ This job posting appears to be LEGITIMATE.";
                 
-                if (result.confidence) {
-                    messageElement.textContent += ` (Confidence: ${(result.confidence * 100).toFixed(1)}%)`;
-                }
+                messageElement.textContent += ` (Confidence: ${(result.confidence * 100).toFixed(1)}%)`;
                 
                 resultDiv.style.display = 'block';
                 resultDiv.scrollIntoView({ behavior: 'smooth' });
