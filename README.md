@@ -2,6 +2,8 @@
 
 This project uses Natural Language Processing (NLP) and machine learning to detect fraudulent job postings. It leverages TF-IDF vectorization, a Random Forest classifier, and a comprehensive NLP pipeline to classify job descriptions as real or fake.
 
+![Image](https://github.com/user-attachments/assets/902c3d0b-1595-4fba-a497-4e57dc5c8977)
+![Image](https://github.com/user-attachments/assets/1ba320a8-c344-42e0-a206-85bdfe6c4e88)
 ---
 
 ## 📌 Project Overview
@@ -33,6 +35,7 @@ Only a small portion of the data is fraudulent, making class imbalance a challen
 ---
 
 ## 📊 Model Performance
+![Image](https://github.com/user-attachments/assets/412b4e71-520c-4810-957e-86d0b699c5a3)
 
 | Metric       | Score      |
 |--------------|------------|
